@@ -6,9 +6,9 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
+// #include <unistd.h>
+// #include <arpa/inet.h>
+// #include <netinet/in.h>
 
 #include "my_micro_httpd.h"
 #include "queue.h"
@@ -26,21 +26,26 @@ int main(int argc, char* argv[])
     int server_socket, client_socket, clilen;       // server_socket: listenfd, client_socket: connfd
     struct sockaddr_in serv_addr, cli_addr;         // -> netdb.h
     int one, port_id;
-    pthread_t service_thr;
+    // pthread_t service_thr;
 
-    port_id = 4000;                 // arbitrary port #
     int thread;
     pthread_t* thread_handles;
     Request input_request;
 
-    if (argc != 2) {
-        fprintf(stderr, "usage: a.out <# of workers> \n");
+    if (argc != 3) {
+        fprintf(stderr, "usage: a.out <port #> <# of workers> \n");
         return -1;
     }
     if (atoi(argv[1]) < 0) {
         fprintf(stderr, "%d must be >= 0 \n", atoi(argv[1]));
         return -1;
     }
+    if (atoi(argv[2]) < 0) {
+        fprintf(stderr, "%d must be >= 0 \n", atoi(argv[2]));
+        return -1;
+    }
+
+    port_id = atoi(argv[1]);
 
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0)      // -> sys/types.h, sys/socket.h
     {            // 시스템이 listenfd를 반환해줌.
@@ -69,7 +74,7 @@ int main(int argc, char* argv[])
     request_queue = &RQ;
     InitQueue(request_queue);
 
-    thread_count = atoi(argv[1]);
+    thread_count = atoi(argv[2]);
     thread_handles = (pthread_t*) malloc(thread_count * sizeof(pthread_t));      // -> stdlib.h
 
     /* Generate a thread pool */
