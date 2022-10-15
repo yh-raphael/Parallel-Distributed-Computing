@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
     }
 
 
-    printf("Total number of received message characters: %ld \n", sum_received);
+    printf("Total received bytes: %ld \n", sum_received);
 
     
     /* Free Heap dynamic memory space */
@@ -155,6 +155,7 @@ void * do_request_routine (void * rank)
 
 
         close(my_sock);
+        sleep(2);
     }
 
 
