@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include <pthread.h>
 
+/* 글로벌 변수: 모든 스레드에서 엑세스 가능함 */
 int thread_count;
 
 void * Hello(void* rank);
 
 int main(int argc, char* argv[])
 {
+    /* 64비트 시스템의 경우는 long을 사용함 */
     long thread;                                                    // size of long: 8
     pthread_t* thread_handles;                                      // -> pthread.h
 
@@ -30,6 +32,7 @@ int main(int argc, char* argv[])
 
 void* Hello(void* rank)
 {
+    /* 64비트 시스템의 경우는 long을 사용함 */
     long my_rank = (long) rank;
 
     printf("Hello from thread %ld of %d\n", my_rank, thread_count);
