@@ -13,10 +13,15 @@
 #include "my_micro_httpd.h"
 #include "queue.h"
 
+#define __DEBUG__
+
 /* Shared Resources */
 Queue RQ;
 Queue* request_queue;
 int thread_count;
+
+pthread_mutex_t mutex;
+pthread_cond_t not_empty;
 
 void * service_dispatch(void * rank);
 
@@ -59,7 +64,7 @@ int main(int argc, char* argv[])
     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     serv_addr.sin_port = htons(port_id);
 
-    // setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, (char *) &one, sizeof(one));     // ??? Why necessary?
+    // setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, (char *) &one, sizeof(one));     // ??? Why necessary? (from lecture notes)
 
     if (bind(server_socket, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
@@ -76,6 +81,9 @@ int main(int argc, char* argv[])
 
     thread_count = atoi(argv[2]);
     thread_handles = (pthread_t*) malloc(thread_count * sizeof(pthread_t));      // -> stdlib.h
+
+    pthread_mutex_init(&mutex, NULL);
+    pthread_cond_init(&not_empty, NULL);
 
     /* Generate a thread pool */
     for (thread = 0; thread < thread_count; thread++)
@@ -97,20 +105,14 @@ int main(int argc, char* argv[])
         }
 
         /* Get user request */
-        if (read(client_socket, &input_request, sizeof(Request)) > 0)                       // !!!!!!!!!!! msg 상세화!!
+        if (read(client_socket, &input_request, sizeof(Request)) > 0)                       // !!!!!!!!!!! msg 상세화?!
         {
-            /* DEBUG */
-            printf("From %d -> Received Request:%s\n", client_socket, input_request.msg);
-
+#ifdef __DEBUG__
+            printf("Client Socket: %d -> Received Request: %s \n", client_socket, input_request.msg);
+#endif
             /* Identify user request */
             input_request.fd = client_socket;
             Enqueue(request_queue, input_request);
-
-            /* Do necessary processing, synchronize if necessary */
-
-
-            /* Send results back to the server */
-
         }
 
         /* Thread per request Method */
@@ -119,7 +121,10 @@ int main(int argc, char* argv[])
         //                                 /* The parent thread doesn't need to wait. */
     }
 
-    free(thread_count);
+    pthread_mutex_destroy(&mutex);
+    pthread_cond_destroy(&not_empty);
+
+    free(thread_handles);
     close(server_socket);
 
     return 0;
@@ -148,9 +153,12 @@ void * service_dispatch(void * rank)
         {
             fprintf(stderr, "Error: Unable to process HTTP request \n");
         }
+
+        /* Close connect */
+        close(popped.fd);
     }
 
-    /* Close connect */  // and terminate thread
-    //close(popped.fd);
+    /* Close connect and terminate thread */
+    // close(popped.fd);
     // pthread_exit((void *) 0);
 }

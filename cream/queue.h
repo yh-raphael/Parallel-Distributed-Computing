@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
 
 #define MAX_MSG_LEN 1024
 
@@ -32,5 +33,9 @@ void InitQueue(Queue *queue);               // 큐 초기화
 int IsEmpty(Queue *queue);                  // 큐가 비었는지 확인
 void Enqueue(Queue *queue, Request data);   // 큐에 삽입
 Request Dequeue(Queue *queue);              // 큐에서 꺼냄
+
+
+extern pthread_mutex_t mutex;
+extern pthread_cond_t not_empty;
 
 #endif

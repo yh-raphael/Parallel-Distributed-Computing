@@ -1,22 +1,6 @@
 #include "queue.h"
 
-// int main(void)
-// {
-//     int i;
-//     Queue queue;
-
-//     InitQueue(&queue);//큐 초기화
-//     for (i = 1; i <= 5; i++)//1~5까지 큐에 보관
-//     {
-//         Enqueue(&queue, i);
-//     }
-//     while (!IsEmpty(&queue))//큐가 비어있지 않다면 반복
-//     {
-//         printf("%d ", Dequeue(&queue));//큐에서 꺼내온 값 출력
-//     }
-//     printf("\n");
-//     return 0;
-// }
+/* Note. Synchronization is the main issue here! */
 
 void InitQueue(Queue *queue)
 {
@@ -32,6 +16,8 @@ int IsEmpty(Queue *queue)
 /* Insert an element into the queue. */
 void Enqueue(Queue *queue, Request data)
 {
+    pthread_mutex_lock(&mutex);
+
     Node *now = (Node *) malloc(sizeof(Node));  //노드 생성
     now->data = data;                           //데이터 설정
     now->next = NULL;
@@ -46,17 +32,22 @@ void Enqueue(Queue *queue, Request data)
     }
     queue->rear = now;              //맨 뒤를 now로 설정   
     queue->count++;                 //보관 개수를 1 증가
+
+    pthread_cond_signal(&not_empty);                // "I just added, so please don't wait!"
+    pthread_mutex_unlock(&mutex);
 }
 
 /* Pop an element out of the queue */
 Request Dequeue(Queue *queue)
 {
+    pthread_mutex_lock(&mutex);
+
     Request re = {"void!!\n", 0};
     Node *now;
 
-    if (IsEmpty(queue))         //큐가 비었을 때
+    while (IsEmpty(queue))         //큐가 비었을 때
     {
-        return re;            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        pthread_cond_wait(&not_empty, &mutex);      // !!! Synch !!!
     }
 
     now = queue->front;         //맨 앞의 노드를 now에 기억
@@ -65,6 +56,9 @@ Request Dequeue(Queue *queue)
 
     free(now);                  //now 소멸
     queue->count--;             //보관 개수를 1 감소
+
+
+    pthread_mutex_unlock(&mutex);
 
     return re;
 }

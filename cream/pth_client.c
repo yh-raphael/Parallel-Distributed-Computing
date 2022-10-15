@@ -9,8 +9,9 @@
 #include <pthread.h>
 #include <time.h>
 
-#define MAX_MSG_SIZE    512
+#define MAX_MSG_SIZE    1024
 
+#define __DEBUG__
 
 char server_ip[64];
 int port_id;
@@ -26,6 +27,8 @@ void * do_request_routine (void * rank);
 
 int main(int argc, char* argv[])
 {
+    srand((unsigned int) time(NULL));
+
     /* Argument Vector Handling */
     if (argc != 6) {
         fprintf(stderr, "usage: a.out <server_ip> <server_port_id> <# of workers> <# of access> <list file path> \n");
@@ -88,6 +91,7 @@ int main(int argc, char* argv[])
     }
 
 
+    printf("Total number of received message characters: %ld \n", sum_received);
 
     
     /* Free Heap dynamic memory space */
@@ -105,15 +109,15 @@ void * do_request_routine (void * rank)
     int my_sock;
     struct sockaddr_in serv_addr;
 
-    char send_message[MAX_MSG_SIZE];
-    char recieve_message[MAX_MSG_SIZE];
+    char sent_message[MAX_MSG_SIZE];
+    char recieved_message[MAX_MSG_SIZE];
 
 
     for (int i = 0; i < access_count; i++)
     {
         /* Configure connection with the server */
         my_sock = socket(PF_INET, SOCK_STREAM, 0);
-        if(my_sock == -1)
+        if (my_sock == -1)
             printf("socket error \n");
 
         memset(&serv_addr, 0, sizeof(serv_addr));
@@ -127,21 +131,26 @@ void * do_request_routine (void * rank)
 
 
         /* Make a HTTP request: [GET /tecfamoo/welcome.html HTTP/1.0] */
-        srand((unsigned int) time(NULL));
+
         int random = rand() % file_count;
-        snprintf(send_message, MAX_MSG_SIZE, "GET %s HTTP/1.0\r\n", file_path[random]);
+        snprintf(sent_message, MAX_MSG_SIZE, "GET %s HTTP/1.0\r\n", file_path[random]);
+
+#ifdef __DEBUG__
+        printf("Sent Message: %s \n", sent_message);
+#endif
 
 
         /* Send a HTTP request to the server */
-        send(my_sock, send_message, strlen(send_message), 0);
+        send(my_sock, sent_message, strlen(sent_message), 0);
 
 
         /* Receive a HTTP response from the server */
-        if (recv(my_sock, recieve_message, MAX_MSG_SIZE, 0) == -1) {
+        if (recv(my_sock, recieved_message, MAX_MSG_SIZE, 0) == -1) {
             printf("receive error \n");
         }
         else {
-            sum_received += strlen(recieve_message);
+            printf("Received Message: %s \n", recieved_message);
+            sum_received += strlen(recieved_message);
         }
 
 

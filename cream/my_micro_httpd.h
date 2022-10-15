@@ -37,35 +37,37 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define FILE_LOCATION "/var/tmp/raphael"                    // default location!
-#define PROTOCOL "HTTP/1.0"
-// #define DEBUG
+#define PROTOCOL        "HTTP/1.0"
+#define MAX_MSG_LEN     1024
+//#define __DEBUG__
+
 /* Forwards. */
 static int send_response(int fd, int status, char* title, char* body);
 static void strdecode( char* to, char* from );
 static int hexit( char c );
 static void strencode( char* to, size_t tosize, const char* from );
 
-// int process_request(const char* request, int fd)
+/* Worker Thread Routine - Handle HTTP protocol */
 int do_worker_routine(const char* request, int fd) 
 {
 
-#ifdef DEBUG
-        printf("WORKER) Working on Request: %s", request);
+#ifdef __DEBUG__
+    printf("Worker is watching this request: %s \n", request);
 #endif
 
-    char method[300], path[1000] = FILE_LOCATION, protocol[20];
     // char line[10000], method[10000], path[10000], protocol[10000], idx[20000], location[20000];
+    char method[1000], path[1000], protocol[1000];
     char buf[1024];
-    char* file = &path[strlen(FILE_LOCATION)];
+
     size_t len;
     int cn;
+    int ich;
     struct stat sb;
     FILE* fp;
     struct dirent **dl;
 
-    // if ( sscanf( request, "%19[^ ] %400[^ ] %19[^ ]\r\n", method, file, protocol ) != 3 ) {
-    if ( sscanf( request, "%[^ ] %[^ ] %[^ ]\r\n", method, file, protocol ) != 3 ) {
+
+    if ( sscanf( request, "%[^ ] %[^ ] %[^ ]\r\n", method, path, protocol ) != 3 ) {
         send_response(fd, 400, "Bad Request", "This request is not the correctly formatted one.");
         return -1;
     }
@@ -80,19 +82,7 @@ int do_worker_routine(const char* request, int fd)
         return -1;
     }
 
-    ++file;
-    strdecode (file, file);
-
-    if (file[0] == '\0')
-        file = "./";
-
-    len = strlen( file );
-    if ( file[0] == '/' || strcmp( file, ".." ) == 0 || strncmp( file, "../", 3 ) == 0 || strstr( file, "/../" ) != (char*) 0 || strcmp( &(file[len-3]), "/.." ) == 0 ) {
-        send_response(fd, 400, "Bad Request", "Illegal filename.");
-        return -1;
-    }
-
-    if (stat(path, &sb) < 0) {
+    if ( stat(path, &sb) < 0 ) {
         send_response(fd, 404, "Not Found", "File not found.");
         return -1;
     }
@@ -102,23 +92,23 @@ int do_worker_routine(const char* request, int fd)
     }
     else
     {
-        fp = fopen( path, "rb" );
+        fp = fopen( path, "rt" );
         if ( fp == (FILE*) 0 ) {
             send_response(fd, 403, "Forbidden", "File is protected.");
             return -1;
         }
-        send_response( fd, 200, "Ok", NULL);
+        send_response(fd, 200, "Ok", NULL);
         while ( (cn = fread(buf, 1, sizeof(buf), fp)) > 0 ) {
             write(fd, buf, cn);
         }
         fclose(fp);
-    }
+	}
 
     return 0;
 }
 
-static int send_response(int fd, int status, char* title, char* body) {
-
+static int send_response(int fd, int status, char* title, char* body)
+{
     char buf[1024];
     int cn;
     if (body)
