@@ -28,12 +28,12 @@ int main(int argc, char* argv[])
     int one, port_id;
     // pthread_t service_thr;
 
-    int thread;
+    long thread;
     pthread_t* thread_handles;
     Request input_request;
 
     if (argc != 3) {
-        fprintf(stderr, "usage: a.out <port #> <# of workers> \n");
+        fprintf(stderr, "usage: a.out <port_id> <# of workers> \n");
         return -1;
     }
     if (atoi(argv[1]) < 0) {
@@ -119,6 +119,7 @@ int main(int argc, char* argv[])
         //                                 /* The parent thread doesn't need to wait. */
     }
 
+    free(thread_count);
     close(server_socket);
 
     return 0;
@@ -143,7 +144,7 @@ void * service_dispatch(void * rank)
     while (1)
     {
         popped = Dequeue(request_queue);
-        if (do_worker_routine(popped.msg, popped.fd) < 0)
+        if (do_worker_routine(popped.msg, popped.fd) < 0)                   // refer to micro_httpd.h
         {
             fprintf(stderr, "Error: Unable to process HTTP request \n");
         }

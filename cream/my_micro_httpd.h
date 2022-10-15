@@ -37,7 +37,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define FILE_LOCATION "/var/tmp/raphael"
+#define FILE_LOCATION "/var/tmp/raphael"                    // default location!
 #define PROTOCOL "HTTP/1.0"
 // #define DEBUG
 /* Forwards. */
