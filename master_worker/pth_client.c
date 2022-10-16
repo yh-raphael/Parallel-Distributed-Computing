@@ -8,6 +8,7 @@
 
 #include <pthread.h>
 #include <time.h>
+#include "timer.h"
 
 #define MAX_MSG_SIZE    1024
 
@@ -23,10 +24,13 @@ int file_count;
 char* file_path[512];
 long sum_received = 0;
 
+double start, finish, elapsed;
+
 void * do_request_routine (void * rank);
 
 int main(int argc, char* argv[])
 {
+    /* Access .html file randomly */
     srand((unsigned int) time(NULL));
 
     /* Argument Vector Handling */
@@ -73,6 +77,7 @@ int main(int argc, char* argv[])
     fclose(fp);
 
 
+    GET_TIME(start);
     /* Generate a thread pool */
     long thread;
     pthread_t* thread_handles;
@@ -89,9 +94,13 @@ int main(int argc, char* argv[])
     {
         pthread_join(thread_handles[thread], NULL);
     }
+    GET_TIME(finish);
 
 
+    /* Print statistics */
+    elapsed = finish - start;
     printf("Total received bytes: %ld \n", sum_received);
+    printf("Client side elapsed time: %lf seconds \n", elapsed);
 
     
     /* Free Heap dynamic memory space */

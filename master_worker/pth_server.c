@@ -6,14 +6,13 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
-// #include <unistd.h>
-// #include <arpa/inet.h>
-// #include <netinet/in.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+// #include <netinet/tcp.h> 
 
 #include "my_micro_httpd.h"
 #include "queue.h"
-
-#define __DEBUG__
 
 /* Shared Resources */
 Queue RQ;
@@ -24,6 +23,7 @@ pthread_mutex_t mutex;
 pthread_cond_t not_empty;
 
 void * service_dispatch(void * rank);
+int settcpnodelay(int sock);
 
 /* Master Thread */
 int main(int argc, char* argv[])
@@ -65,6 +65,7 @@ int main(int argc, char* argv[])
     serv_addr.sin_port = htons(port_id);
 
     // setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, (char *) &one, sizeof(one));     // ??? Why necessary? (from lecture notes)
+    // settcpnodelay(server_socket);
 
     if (bind(server_socket, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
@@ -74,6 +75,8 @@ int main(int argc, char* argv[])
     }
 
     listen(server_socket, 5);                                                               // ??? Parameter: "backlog" meaning?
+
+    printf("Listening now . . . \n");
 
     /* Initialize a single request queue */
     request_queue = &RQ;
@@ -107,9 +110,8 @@ int main(int argc, char* argv[])
         /* Get user request */
         if (read(client_socket, &input_request, sizeof(Request)) > 0)                       // !!!!!!!!!!! msg 상세화?!
         {
-#ifdef __DEBUG__
             printf("Client Socket: %d -> Received Request: %s \n", client_socket, input_request.msg);
-#endif
+
             /* Identify user request */
             input_request.fd = client_socket;
             Enqueue(request_queue, input_request);
@@ -162,3 +164,11 @@ void * service_dispatch(void * rank)
     // close(popped.fd);
     // pthread_exit((void *) 0);
 }
+
+
+// int settcpnodelay(int sock)
+// {
+// 	int flag = 1;
+// 	int result = setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int));
+// 	return result;
+// }
