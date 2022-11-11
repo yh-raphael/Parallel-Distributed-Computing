@@ -29,12 +29,6 @@ int main (int argc, char *argv[])
     for (int i = 0; i < n; i++)
         arr[i] = rand () % 64;
 
-    /* Start time measurement */
-	if (my_rank == 0) {
-		gettimeofday (&t, NULL);
-		start = t.tv_sec + t.tv_usec / 1000000.0;
-	}
-
     /* MPI init */
     MPI_Status status;
 	MPI_Init (&argc, &argv);
@@ -42,6 +36,13 @@ int main (int argc, char *argv[])
 	MPI_Comm_size (MPI_COMM_WORLD, &num);
 
 	elements_per_process = PROBLEM_SIZE / num;          // elements_per_process: # of jobs per process.
+
+    /* Start time measurement */
+	if (my_rank == 0) {
+		gettimeofday (&t, NULL);
+		start = t.tv_sec + t.tv_usec / 1000000.0;
+	}
+
 
     //MPI_Request req;
     MPI_Scan (arr, arr_re, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);

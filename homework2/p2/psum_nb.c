@@ -29,24 +29,23 @@ int main (int argc, char *argv[])
     for (int i = 0; i < n; i++)
         arr[i] = rand () % 64;
 
-    /* Start time measurement */
-	if (my_rank == 0) {
-		gettimeofday (&t, NULL);
-		start = t.tv_sec + t.tv_usec / 1000000.0;
-	}
-
     /* MPI init */
 	MPI_Init (&argc, &argv);
 	MPI_Comm_rank (MPI_COMM_WORLD, &my_rank);
 	MPI_Comm_size (MPI_COMM_WORLD, &num);
-
-	elements_per_process = PROBLEM_SIZE / num;          // elements_per_process: # of jobs per process.
+    elements_per_process = PROBLEM_SIZE / num;          // elements_per_process: # of jobs per process.
     // for non-blocking calls!
     MPI_Status status[2 * num];
     MPI_Request Req[2 * num];
 
     MPI_Status status2[2];
     MPI_Request Req2[2];
+
+    /* Start time measurement */
+	if (my_rank == 0) {
+		gettimeofday (&t, NULL);
+		start = t.tv_sec + t.tv_usec / 1000000.0;
+	}
 
     /* START prefix sums */
     /* master process */
