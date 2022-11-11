@@ -8,7 +8,7 @@
 #include <sys/time.h>
 #include <time.h>
 
-#define PROBLEM_SIZE 104857600
+#define PROBLEM_SIZE 1048576
 // #define PROBLEM_SIZE 12
 
 struct timeval t;

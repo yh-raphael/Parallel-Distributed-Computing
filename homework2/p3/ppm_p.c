@@ -40,13 +40,13 @@ int main (int argc, char *argv[])
     PPMfile original, flip, grayscale, smooth;
     int my_rank, comm_size;
     
-    if (argc != 2) {
-        fprintf (stderr, "usage: a.out <input_file>\n");
-        return -1;
-    }
+    // if (argc != 2) {
+    //     fprintf (stderr, "usage: a.out <input_file>\n");
+    //     return -1;
+    // }
 
     strcpy (input_file, argv[1]);
-    if ((ifp = fopen (input_file, "r")) == NULL) {
+    if ((ifp = fopen ("sample_1.ppm", "r")) == NULL) {
         fprintf (stderr, "input file open error\n");
         return -1;
     }

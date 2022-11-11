@@ -39,8 +39,8 @@ e.g. : $ ./ppm_s sample_1.ppm
 -> And then, three output files would be generated: output_flip.ppm, output_grayscale.ppm and output_smooth.ppm.  
   
 ## Execution: parallel program
-usage: $ ./ppm_p <input_file>  
-e.g. : $ ./ppm_p sample_1.ppm  
+usage: $ mpiexec -np <# of nodes> -mca btl ^openib -hostfile <host_file> ./ppm_p  
+e.g. : $ mpiexec -np 4 -mca btl ^openib -hostfile hosts ./ppm_p  
   
 -> And then, three output files would be generated: output_flip.ppm, output_grayscale.ppm and output_smooth.ppm.  
   
