@@ -12,8 +12,7 @@ FILE *ifp, *ofp;
 char word_pool[MAX_LINE][MAX_STR_LEN];
 int count;
 
-char rev[MAX_STR_LEN];
-char arr[MAX_STR_LEN];
+static char rev[MAX_STR_LEN];
 
 void Hello (void);   /* 스레드 함수 */
 
@@ -27,7 +26,7 @@ void create_pool (void)
     count = i;
 }
 
-void reverse_string (void)
+void reverse_string (char* arr)
 {
     strcpy(rev, arr);    // arr 배열을 rev 배열에 복사
     for (int i = 0; i < strlen(rev) / 2; i++) {        // rev 배열의 반만 돌아도 된다
@@ -38,9 +37,9 @@ void reverse_string (void)
     }
 }
 
-int is_palindrome (void)
+int is_palindrome (char* arr)
 {
-    reverse_string();
+    reverse_string(arr);
     if (!strcmp (arr, rev)) {                       // reverse랑 같으면 palindrome.
         fprintf (ofp, "%s\n", arr);
         return 1;
@@ -58,6 +57,8 @@ int is_palindrome (void)
 
 int main (int argc, char* argv[])
 {
+    char word[MAX_STR_LEN];
+
     char input_file[MAX_NAME_LEN];
     char output_file[MAX_NAME_LEN];
     //struct timeval t;
@@ -93,30 +94,35 @@ int main (int argc, char* argv[])
     // start = t.tv_sec + t.tv_usec / 1000000.0;
     start = omp_get_wtime ();
 
-#   pragma omp parallel for
-    for (int i = 0; i < count; i++) {
-        strcpy (arr, word_pool[i]);
-        //is_palindrome();
-        //printf("re: %d \n", re);
-        #pragma omp critical
-        reverse_string();
 
-        if (!strcmp (arr, rev)) {                       // reverse랑 같으면 palindrome.
-            #pragma omp critical
-            fprintf (ofp, "%s\n", arr);
+
+#pragma omp parallel for private(word)
+    for (int i = 0; i < count; i++) {
+        #pragma omp critical
+        strcpy (word, word_pool[i]);
+        // is_palindrome(word);
+        //printf("re: %d \n", re);
+
+        
+        reverse_string(word);
+
+        if (!strcmp (word, rev)) {                       // reverse랑 같으면 palindrome.
+            //printf("%s\n", rev);
+            fprintf (ofp, "%s\n", word);
             //return 1;
         }
         else {
             for (int i = 0; i < count; i++) {
                 if (!strcmp (rev, word_pool[i])) {      // reverse가 pool에 있으면 palindrome.
-                    #pragma omp critical
-                    fprintf (ofp, "%s\n", arr);
+
+                    fprintf (ofp, "%s\n", word);
                     //return 1;
                 }
             }
         }
         //return 0;
     }
+
 
     // gettimeofday(&t, NULL);
     // finish = t.tv_sec + t.tv_usec / 1000000.0;

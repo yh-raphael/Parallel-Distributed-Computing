@@ -1,6 +1,0 @@
-amber
-draw
-palindrome
-noon
-ward
-
