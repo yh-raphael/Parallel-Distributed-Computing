@@ -11,3 +11,7 @@ epoll_server
 epoll_client
 
 palindrome
+
+*.o
+rand_server
+rand_client
