@@ -15,3 +15,4 @@ palindrome
 *.o
 rand_server
 rand_client
+a.out
