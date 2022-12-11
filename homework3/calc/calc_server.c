@@ -7,7 +7,7 @@
 #include "calc.h"
 
 char *
-convert_expression_1_svc(char *argp, struct svc_req *rqstp)
+convert_operator_1_svc(char *argp, struct svc_req *rqstp)
 {
 	static char  result;
 
@@ -18,10 +18,22 @@ convert_expression_1_svc(char *argp, struct svc_req *rqstp)
 	return &result;
 }
 
-long *
+double *
+do_calculation_1_svc(para *argp, struct svc_req *rqstp)
+{
+	static double  result;
+
+	/*
+	 * insert server code here
+	 */
+
+	return &result;
+}
+
+double *
 calculate_expression_1_svc(char *argp, struct svc_req *rqstp)
 {
-	static long  result;
+	static double  result;
 
 	/*
 	 * insert server code here

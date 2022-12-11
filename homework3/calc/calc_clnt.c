@@ -10,12 +10,12 @@
 static struct timeval TIMEOUT = { 25, 0 };
 
 char *
-convert_expression_1(char *argp, CLIENT *clnt)
+convert_operator_1(char *argp, CLIENT *clnt)
 {
 	static char clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call (clnt, CONVERT_EXPRESSION,
+	if (clnt_call (clnt, CONVERT_OPERATOR,
 		(xdrproc_t) xdr_char, (caddr_t) argp,
 		(xdrproc_t) xdr_char, (caddr_t) &clnt_res,
 		TIMEOUT) != RPC_SUCCESS) {
@@ -24,15 +24,30 @@ convert_expression_1(char *argp, CLIENT *clnt)
 	return (&clnt_res);
 }
 
-long *
+double *
+do_calculation_1(para *argp, CLIENT *clnt)
+{
+	static double clnt_res;
+
+	memset((char *)&clnt_res, 0, sizeof(clnt_res));
+	if (clnt_call (clnt, DO_CALCULATION,
+		(xdrproc_t) xdr_para, (caddr_t) argp,
+		(xdrproc_t) xdr_double, (caddr_t) &clnt_res,
+		TIMEOUT) != RPC_SUCCESS) {
+		return (NULL);
+	}
+	return (&clnt_res);
+}
+
+double *
 calculate_expression_1(char *argp, CLIENT *clnt)
 {
-	static long clnt_res;
+	static double clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
 	if (clnt_call (clnt, CALCULATE_EXPRESSION,
 		(xdrproc_t) xdr_char, (caddr_t) argp,
-		(xdrproc_t) xdr_long, (caddr_t) &clnt_res,
+		(xdrproc_t) xdr_double, (caddr_t) &clnt_res,
 		TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}

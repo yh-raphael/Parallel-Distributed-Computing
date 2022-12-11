@@ -18,21 +18,27 @@ extern "C" {
 #define CALC_VERS 1
 
 #if defined(__STDC__) || defined(__cplusplus)
-#define CONVERT_EXPRESSION 1
-extern  char * convert_expression_1(char *, CLIENT *);
-extern  char * convert_expression_1_svc(char *, struct svc_req *);
-#define CALCULATE_EXPRESSION 2
-extern  long * calculate_expression_1(char *, CLIENT *);
-extern  long * calculate_expression_1_svc(char *, struct svc_req *);
+#define CONVERT_OPERATOR 1
+extern  char * convert_operator_1(char *, CLIENT *);
+extern  char * convert_operator_1_svc(char *, struct svc_req *);
+#define DO_CALCULATION 2
+extern  double * do_calculation_1(para *, CLIENT *);
+extern  double * do_calculation_1_svc(para *, struct svc_req *);
+#define CALCULATE_EXPRESSION 3
+extern  double * calculate_expression_1(char *, CLIENT *);
+extern  double * calculate_expression_1_svc(char *, struct svc_req *);
 extern int calc_prog_1_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 
 #else /* K&R C */
-#define CONVERT_EXPRESSION 1
-extern  char * convert_expression_1();
-extern  char * convert_expression_1_svc();
-#define CALCULATE_EXPRESSION 2
-extern  long * calculate_expression_1();
-extern  long * calculate_expression_1_svc();
+#define CONVERT_OPERATOR 1
+extern  char * convert_operator_1();
+extern  char * convert_operator_1_svc();
+#define DO_CALCULATION 2
+extern  double * do_calculation_1();
+extern  double * do_calculation_1_svc();
+#define CALCULATE_EXPRESSION 3
+extern  double * calculate_expression_1();
+extern  double * calculate_expression_1_svc();
 extern int calc_prog_1_freeresult ();
 #endif /* K&R C */
 

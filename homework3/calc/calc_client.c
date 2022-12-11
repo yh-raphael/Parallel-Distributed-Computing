@@ -12,8 +12,10 @@ calc_prog_1(char *host)
 {
 	CLIENT *clnt;
 	char  *result_1;
-	char  convert_expression_1_arg;
-	long  *result_2;
+	char  convert_operator_1_arg;
+	double  *result_2;
+	para  do_calculation_1_arg;
+	double  *result_3;
 	char  calculate_expression_1_arg;
 
 #ifndef	DEBUG
@@ -24,12 +26,16 @@ calc_prog_1(char *host)
 	}
 #endif	/* DEBUG */
 
-	result_1 = convert_expression_1(&convert_expression_1_arg, clnt);
+	result_1 = convert_operator_1(&convert_operator_1_arg, clnt);
 	if (result_1 == (char *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
-	result_2 = calculate_expression_1(&calculate_expression_1_arg, clnt);
-	if (result_2 == (long *) NULL) {
+	result_2 = do_calculation_1(&do_calculation_1_arg, clnt);
+	if (result_2 == (double *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
+	result_3 = calculate_expression_1(&calculate_expression_1_arg, clnt);
+	if (result_3 == (double *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
 #ifndef	DEBUG
