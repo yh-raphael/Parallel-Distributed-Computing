@@ -4,56 +4,95 @@
  * as a guideline for developing your own functions.
  */
 
+// #include "calc.h"
+
+
+// void
+// calc_prog_1(char *host)
+// {
+// 	CLIENT *clnt;
+// 	double  *result_1;
+// 	char * calculate_expression_1_arg;
+
+// #ifndef	DEBUG
+// 	clnt = clnt_create (host, CALC_PROG, CALC_VERS, "udp");
+// 	if (clnt == NULL) {
+// 		clnt_pcreateerror (host);
+// 		exit (1);
+// 	}
+// #endif	/* DEBUG */
+
+// 	result_1 = calculate_expression_1(&calculate_expression_1_arg, clnt);
+// 	if (result_1 == (double *) NULL) {
+// 		clnt_perror (clnt, "call failed");
+// 	}
+// #ifndef	DEBUG
+// 	clnt_destroy (clnt);
+// #endif	 /* DEBUG */
+// }
+
+
+// int
+// main (int argc, char *argv[])
+// {
+// 	char *host;
+
+// 	if (argc < 2) {
+// 		printf ("usage: %s server_host\n", argv[0]);
+// 		exit (1);
+// 	}
+// 	host = argv[1];
+// 	calc_prog_1 (host);
+// exit (0);
+// }
+
+
+
+/*
+Produced by Raphael Cho.
+Creation Date: 2022-12-11-Sun.
+Last Modification Date: 2022-12-12-Mon.
+*/
+
+
 #include "calc.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
+#define MAX_STR_LEN 100
 
-void
-calc_prog_1(char *host)
+void main (int argc, char *argv[ ])
 {
 	CLIENT *clnt;
-	char  *result_1;
-	char  convert_operator_1_arg;
-	double  *result_2;
-	para  do_calculation_1_arg;
-	double  *result_3;
-	char  calculate_expression_1_arg;
+	double  *result_1;
+	// char  calculate_expression_1_arg;
 
-#ifndef	DEBUG
-	clnt = clnt_create (host, CALC_PROG, CALC_VERS, "udp");
+    // Get command-line arguments.
+	if ( argc != 2 ) {
+		fprintf(stderr, "Usage: ./calc_client host \n");
+		exit(1);
+	}
+
+	// Stub create?!
+	clnt = clnt_create (argv[1], CALC_PROG, CALC_VERS, "udp");
 	if (clnt == NULL) {
-		clnt_pcreateerror (host);
+		clnt_pcreateerror (argv[1]);
 		exit (1);
 	}
-#endif	/* DEBUG */
+    
+    char* arith = (char *) malloc (MAX_STR_LEN);
+    scanf("%s", arith);
+	// strcpy (arith, argv[2]);
 
-	result_1 = convert_operator_1(&convert_operator_1_arg, clnt);
-	if (result_1 == (char *) NULL) {
+	result_1 = calculate_expression_1 (&arith, clnt);	// Remote Procedure Call 1.
+	if (result_1 == (double *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
-	result_2 = do_calculation_1(&do_calculation_1_arg, clnt);
-	if (result_2 == (double *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	result_3 = calculate_expression_1(&calculate_expression_1_arg, clnt);
-	if (result_3 == (double *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-#ifndef	DEBUG
-	clnt_destroy (clnt);
-#endif	 /* DEBUG */
-}
+    printf("The answer is %d\n", (int) *result_1);
+    printf("The answer is %f in floating number\n", *result_1);
 
-
-int
-main (int argc, char *argv[])
-{
-	char *host;
-
-	if (argc < 2) {
-		printf ("usage: %s server_host\n", argv[0]);
-		exit (1);
-	}
-	host = argv[1];
-	calc_prog_1 (host);
-exit (0);
+	// Stub destroy?!
+	clnt_destroy(clnt);
+	exit(0);
 }

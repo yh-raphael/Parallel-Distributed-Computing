@@ -20,9 +20,7 @@ static void
 calc_prog_1(struct svc_req *rqstp, register SVCXPRT *transp)
 {
 	union {
-		char convert_operator_1_arg;
-		para do_calculation_1_arg;
-		char calculate_expression_1_arg;
+		char *calculate_expression_1_arg;
 	} argument;
 	char *result;
 	xdrproc_t _xdr_argument, _xdr_result;
@@ -33,20 +31,8 @@ calc_prog_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		(void) svc_sendreply (transp, (xdrproc_t) xdr_void, (char *)NULL);
 		return;
 
-	case CONVERT_OPERATOR:
-		_xdr_argument = (xdrproc_t) xdr_char;
-		_xdr_result = (xdrproc_t) xdr_char;
-		local = (char *(*)(char *, struct svc_req *)) convert_operator_1_svc;
-		break;
-
-	case DO_CALCULATION:
-		_xdr_argument = (xdrproc_t) xdr_para;
-		_xdr_result = (xdrproc_t) xdr_double;
-		local = (char *(*)(char *, struct svc_req *)) do_calculation_1_svc;
-		break;
-
 	case CALCULATE_EXPRESSION:
-		_xdr_argument = (xdrproc_t) xdr_char;
+		_xdr_argument = (xdrproc_t) xdr_wrapstring;
 		_xdr_result = (xdrproc_t) xdr_double;
 		local = (char *(*)(char *, struct svc_req *)) calculate_expression_1_svc;
 		break;
