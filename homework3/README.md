@@ -1,4 +1,5 @@
-## Written by Raphael Cho on Dec 12, 2022.
+### Written by Raphael Cho on Dec 12, 2022.
+### Last updated on Dec 13, 2022.
 
 # RPC calculating server
 
@@ -47,6 +48,34 @@ e.g.
 => hello server  
 => The answer is 25  
 => The answer is 25.000000 in floating number  
+
+
+
+# Kafka: A Text-Based Chatting Program
+
+## How to compile sources?
+
+Please go the the directory "SogangTalk/" and enter the make command "mvn package" or possibly "mvn clean package".  
+
+Once the compilation is over, there should be newly generated .jar files in the "SogangTalk/target/" directory.  
+
+
+## How to run it?
+
+### 1st. Run the Zookeeper and the Broker
+
+There should be kafka engine on your server.  
+If so, you can run the zookeeper using the command below as an example.  
+
+-> $ bin/zookeeper-server-start.sh config/zookeeper.properties  
+-> $ bin/kafka-server-start.sh config/server.properties  
+
+### 2nd. Run the .jar file compiled before
+
+If you are in the "SogangTalk/" directory, then you can enter the command below to start the chatting application!  
+
+-> $ java -jar target/SogangTalk_raphael-1.0.jar  
+
 
 
 Thanks for your reading :)  

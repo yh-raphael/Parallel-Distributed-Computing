@@ -85,7 +85,7 @@ class Consumer
         Properties config = new Properties();                           // set the config.
 
         config.put(ConsumerConfig.GROUP_ID_CONFIG, ID);
-        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:10400");
+        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
@@ -115,7 +115,7 @@ class Producer
     {
         Properties config = new Properties();   // Properties -> producer 설정 정보 저장.
 
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:10400");                 // broker 목록 등.
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");                 // broker 목록 등.
         config.put(ProducerConfig.CLIENT_ID_CONFIG, ID);
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");       // key serializer
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");     // value serializer
@@ -199,7 +199,7 @@ public class SogangTalk
 
                 // Create the New Topic which is Chat room name.
                 Properties properties = new Properties ();
-                properties.put (AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:10400");
+                properties.put (AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
                 try (Admin admin = Admin.create (properties))
                 {
                     String topicName = room_name;       // added on the template.
