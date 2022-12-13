@@ -1,4 +1,4 @@
-## Written by Raphael Cho.
+## Written by Raphael Cho on Dec 12, 2022.
 
 # RPC calculating server
 
@@ -41,7 +41,7 @@ Usage: ./calc_client host  (enter)
 
 ### cf. Server side
 
-There might be printed messages on the server side terminal.  
+There would be printed messages on the server side terminal (in this case: cspro2.sogang.ac.kr).  
 
 e.g.  
 => hello server  

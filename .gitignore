@@ -16,3 +16,8 @@ palindrome
 rand_server
 rand_client
 a.out
+
+kafka_2.13-3.3.1.tgz
+kafka_example.tar
+kafka_2.13-3.3.1/
+
