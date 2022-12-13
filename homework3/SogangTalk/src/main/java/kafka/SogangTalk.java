@@ -30,7 +30,7 @@ import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.admin.CreateTopicsResult;
 import org.apache.kafka.clients.admin.ListTopicsResult;
-// import org.apache.kafka.common.config.TopicConfig;
+import org.apache.kafka.common.config.TopicConfig;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.KafkaFuture;
 
@@ -54,9 +54,24 @@ class Consumer
         }
     }
 
+    public boolean check_chat_room_list (String room_name)
+    {
+        boolean isValid = false;
+
+        Map <String, List<PartitionInfo> > topics = this.consumer.listTopics ();
+        Set <String> keySet = topics.keySet ();
+        for (String key : keySet)
+        {
+            if (key.equals ("__consumer_offsets")) continue;
+            if (key.equals (room_name)) isValid = true;
+        }
+
+        return isValid;
+    }
+
     public void read ()
     {
-        ConsumerRecords<String, String> records = this.consumer.poll (Duration.ofMillis (100)); 
+        ConsumerRecords<String, String> records = this.consumer.poll (Duration.ofMillis (1000)); 
         this.consumer.commitSync ();                                        // Synchronous Commit! Remember the position.
         for (ConsumerRecord<String, String> record : records)
 		{
@@ -222,6 +237,13 @@ public class SogangTalk
             case "3":   // Join
                 System.out.printf ("SogangTalk> Chat room name: ");
                 String join_room = br.readLine ();
+
+                // A chat room which is not created beforehand is not allowed!
+                Boolean validity = consumer.check_chat_room_list (join_room);
+                if (validity == false) {
+                    System.out.printf ("Room name error! \n");
+                    break;
+                }
 
                 producer = new Producer (ID);       // Now, I'll be the producer for this Topic (chat room)!
                 consumer.subscribe (join_room);     // Now, I'm gonna subscribe this Topic as well (chat room)!
