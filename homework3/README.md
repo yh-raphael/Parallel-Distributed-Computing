@@ -49,4 +49,4 @@ e.g.
 => The answer is 25.000000 in floating number  
 
 
-Thank you for your reading :)  
+Thanks for your reading :)  
